@@ -54,3 +54,7 @@ CLAUDE.local.md
 GEMINI.md
 .copilot/
 copilot-instructions.md
+
+# Python bytecode from the scripts
+__pycache__/
+*.pyc

@@ -27,7 +27,7 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           packages: platform-tools platforms;android-36 build-tools;36.0.0
-      - run: android-reference/scripts/test-host.sh
+      - run: bash android-reference/scripts/test-host.sh
   emulator-scenarios:
     name: Emulator scenarios (AOSP ${{ matrix.api }}, ${{ matrix.arch }})
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
         with:
           packages: platform-tools platforms;android-${{ matrix.api }} build-tools;36.0.0 emulator system-images;android-${{ matrix.api }};default;${{ matrix.arch }}
       - name: Build, boot the AOSP image, install the coordinator and notaries, run every scenario
-        run: android-reference/scripts/ci.sh
+        run: bash android-reference/scripts/ci.sh
       - name: Keep screenshots and logs
         if: always()
         uses: actions/upload-artifact@v4

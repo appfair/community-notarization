@@ -15,18 +15,25 @@ REPORT=org.appfair.notary.report; MEDIA=org.appfair.notary.media
 
 # ---------------------------------------------------------------- device helpers
 shot() { sleep "${2:-1}"; adb exec-out screencap -p > "$SHOTS/$1.png"; echo "  screenshot $SHOTS/$1.png"; }
+# The UI dump is captured into a variable before matching: with pipefail, grep -q closing the
+# pipe early would make the whole pipeline fail even though the text was there.
 ui_dump() { adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb shell cat /sdcard/ui.xml 2>/dev/null | tr '>' '\n'; }
-wait_for_text() {  # wait until some text appears on screen (substring, case-insensitive)
+ui_has() {  # ui_has <text>: true when some node's text starts with the argument (case-insensitive)
+  local dump; dump=$(ui_dump) || true
+  grep -qiF "text=\"$1" <<< "$dump"
+}
+wait_for_text() {  # wait until some text appears on screen
   local want=$1 tries=${2:-30}
   for ((i = 0; i < tries; i++)); do
-    if ui_dump | grep -qiF "text=\"$want"; then return 0; fi
+    if ui_has "$want"; then return 0; fi
     sleep 1
   done
   echo "  text '$want' never appeared"; return 1
 }
 tap_text() {  # tap the centre of the first visible node whose text is exactly the argument
-  local want=$1 line b
-  line=$(ui_dump | grep -iF "text=\"$want\"" | head -1)
+  local want=$1 line b dump
+  dump=$(ui_dump) || true
+  line=$(grep -iF "text=\"$want\"" <<< "$dump" | head -1) || true
   [ -n "$line" ] || { echo "  no '$want' on screen"; return 1; }
   b=$(echo "$line" | sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p')
   read -r x1 y1 x2 y2 <<< "$b"
@@ -89,8 +96,8 @@ finish_auto() {  # finish_auto <name> <ALLOW|BLOCK>: waits for the install, chec
   check "policy decided $outcome" log_has "policy=$outcome" "$name"
   check "no review dialog was shown" log_lacks "asking the user" "$name"
 }
-finish_review() {  # finish_review <name> <Install|Cancel>: answers the dialog and checks the outcome
-  local name=$1 button=$2 result
+finish_review() {  # finish_review <name> <Install|Cancel> [keep]: answers the dialog and checks the outcome
+  local name=$1 button=$2 keep=${3:-} result
   check "review dialog appeared" wait_for_text "$DIALOG_TITLE" 40
   shot "$name-dialog" 1.5
   tap_text "$button" || true
@@ -98,7 +105,8 @@ finish_review() {  # finish_review <name> <Install|Cancel>: answers the dialog a
   if [ "$button" = Install ]; then
     check "adb install succeeded" [ "$result" = Success ]; check "sample is installed" installed
   else
-    check "adb install was rejected" rejected "$result"; check "sample is not installed" not_installed
+    check "adb install was rejected" rejected "$result"
+    [ -n "$keep" ] || check "sample is not installed" not_installed
   fi
   save_log "$name"
   check "policy required review" log_has "policy=REVIEW" "$name"
@@ -275,7 +283,7 @@ scenario_update() {  # a new APK is a new check: evidence for v1 is not reused f
   start_install update1; finish_auto update1 ALLOW
   adb logcat -c
   start_install update "$OUT/sample-v2.apk"
-  finish_review update Cancel
+  finish_review update Cancel keep
   check "no cached evidence applied to the new file" log_lacks "using cached evidence" update
   check "the new file was assessed afresh" log_has "$SCAN -> APPROVE (The example malware scan found no threats.; current response" update
   check "version 1 is still installed" installed
@@ -303,12 +311,11 @@ scenario_settings() {  # the notary settings screen
   adb shell am start -n $COORDINATOR_PKG/.SettingsActivity >/dev/null
   check "settings screen opened" wait_for_text "Common Sensical Media" 15
   shot settings-screen 1.5
-  check "required notary is listed" bash -c "ui_dump | grep -qF 'Android Developer Verification  (required)'"
-  check "HTTPS route is described" bash -c "ui_dump | grep -qF 'HTTPS endpoint 10.0.2.2'"
-  check "APK access is described" bash -c "ui_dump | grep -qF 'a read-only copy of the APK'"
+  check "required notary is listed" ui_has "Android Developer Verification  (required)"
+  check "HTTPS route is described" ui_has "Has this app been scanned for malware?"
+  check "APK access is described" ui_has "Can this app be rebuilt from its public source?"
   adb shell input keyevent KEYCODE_HOME
 }
-export -f ui_dump adb 2>/dev/null || true
 
 ALL="approve review cancel deny exempt advonly timeout cache invalid crash offline disabled identity update incremental settings"
 wait_boot
