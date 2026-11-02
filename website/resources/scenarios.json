@@ -1,0 +1,156 @@
+[
+  {
+    "id": "calculator",
+    "file": "FreeCalculator.apk",
+    "name": "FreeCalculator",
+    "icon": "calculator",
+    "color": "mint",
+    "verdicts": [
+      "approve",
+      "approve",
+      "approve",
+      "approve",
+      "approve"
+    ],
+    "reasons": [
+      "adv_approve",
+      "vt_approve",
+      "fossr_approve",
+      "cr_approve",
+      "cs_approve"
+    ],
+    "advRegistration": "registered"
+  },
+  {
+    "id": "social",
+    "file": "SocialMedia.apk",
+    "name": "SocialMedia",
+    "icon": "chat",
+    "color": "lavender",
+    "verdicts": [
+      "approve",
+      "approve",
+      "abstain",
+      "approve",
+      "age16"
+    ],
+    "reasons": [
+      "adv_approve",
+      "vt_approve",
+      "fossr_abstain",
+      "cr_approve",
+      "cs_age16"
+    ],
+    "advRegistration": "registered"
+  },
+  {
+    "id": "patterns",
+    "file": "DarkPatternz.apk",
+    "name": "DarkPatternz",
+    "icon": "layers",
+    "color": "peach",
+    "verdicts": [
+      "abstain",
+      "approve",
+      "abstain",
+      "disapprove",
+      "abstain"
+    ],
+    "reasons": [
+      "adv_abstain",
+      "vt_approve",
+      "fossr_abstain",
+      "cr_patterns",
+      "cs_abstain"
+    ],
+    "advRegistration": "unregistered"
+  },
+  {
+    "id": "bank",
+    "file": "FakeBank.apk",
+    "name": "FakeBank",
+    "icon": "bank",
+    "color": "blue",
+    "verdicts": [
+      "revoke",
+      "approve",
+      "abstain",
+      "abstain",
+      "abstain"
+    ],
+    "reasons": [
+      "adv_revoke",
+      "vt_approve",
+      "fossr_abstain",
+      "cr_abstain",
+      "cs_abstain"
+    ],
+    "advRegistration": "revoked"
+  },
+  {
+    "id": "stealer",
+    "file": "SecretStealer.apk",
+    "name": "SecretStealer",
+    "icon": "key",
+    "color": "rose",
+    "verdicts": [
+      "approve",
+      "disapprove",
+      "abstain",
+      "abstain",
+      "abstain"
+    ],
+    "reasons": [
+      "adv_approve",
+      "vt_disapprove",
+      "fossr_abstain",
+      "cr_abstain",
+      "cs_abstain"
+    ],
+    "advRegistration": "registered"
+  },
+  {
+    "id": "nudificator",
+    "file": "Nudificator.apk",
+    "name": "Nudificator",
+    "icon": "image",
+    "color": "yellow",
+    "verdicts": [
+      "approve",
+      "approve",
+      "abstain",
+      "disapprove",
+      "disapprove"
+    ],
+    "reasons": [
+      "adv_approve",
+      "vt_approve",
+      "fossr_abstain",
+      "cr_harm",
+      "cs_disapprove"
+    ],
+    "advRegistration": "registered"
+  },
+  {
+    "id": "custom",
+    "file": "CustomResponse.apk",
+    "name": "CustomResponse",
+    "icon": "layers",
+    "color": "blue",
+    "verdicts": [
+      "approve",
+      "approve",
+      "approve",
+      "approve",
+      "approve"
+    ],
+    "reasons": [
+      "custom_approve",
+      "custom_approve",
+      "custom_approve",
+      "custom_approve",
+      "custom_approve"
+    ],
+    "advRegistration": "registered"
+  }
+]

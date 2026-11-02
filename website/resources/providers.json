@@ -1,0 +1,13 @@
+{
+  "coordinators": {
+    "google": "com.android.vending",
+    "aosp": "org.appfair.notarization"
+  },
+  "notaries": {
+    "adv": { "packageId": "com.google.android.verifier", "defaultRoute": "builtin" },
+    "vt": { "packageId": "org.example.virustotality", "defaultRoute": "service-online" },
+    "fossr": { "packageId": "org.fdroid.fdroid", "defaultRoute": "service-local" },
+    "cr": { "packageId": "org.example.consumerreporting", "defaultRoute": "service-online" },
+    "cs": { "packageId": "org.example.commonsensicalmedia", "defaultRoute": "service-online" }
+  }
+}

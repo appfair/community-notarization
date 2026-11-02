@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Community Notarization</string>
+    <string name="settings_label">Notaries</string>
+    <string name="channel_name">App notarization</string>
+    <string name="channel_description">Results of checking apps with the notaries you enabled before they are installed</string>
+</resources>

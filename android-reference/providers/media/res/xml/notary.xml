@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The age-appropriateness notary: answers entirely from a database on the device, so it
+     works offline (local="true"). -->
+<notary
+    protocolVersion="1"
+    providerId="org.appfair.notary.media"
+    transport="service"
+    service=".RatingNotaryService"
+    local="true"
+    name="Common Sensical Media"
+    question="Has this app been reviewed for age-appropriateness?">
+    <data fields="packageName,versionCode,apkSha256,signingCertificateSha256" />
+</notary>

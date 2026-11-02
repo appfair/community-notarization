@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The developer-verification notary (specification, "Registration"). It answers from the
+     package name and signing certificate; the coordinator treats this provider ID as the
+     required ADV notary. -->
+<notary
+    protocolVersion="1"
+    providerId="org.appfair.notary.adv"
+    transport="service"
+    service=".AdvNotaryService"
+    name="Android Developer Verification"
+    question="Is this app’s package and signing certificate registered to a verified developer?">
+    <data fields="packageName,versionCode,apkSha256,signingCertificateSha256" />
+</notary>

@@ -1,0 +1,56 @@
+# OS and editor leftovers
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# website/ (Astro + npm): everything that `npm ci`, `npm run build`, `npm test` and
+# `npm run test:browser` produce. src/generated/ is rebuilt by `npm run resources` on every
+# build, test and dev run, so it is an output, not a source.
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.npm/
+website/dist/
+website/.astro/
+website/.vite/
+website/src/generated/
+website/test-results/
+website/playwright-report/
+website/playwright/.cache/
+website/coverage/
+website/.env
+website/.env.*
+
+# android-reference/ (bare SDK build): APKs, dex, intermediate work dirs, emulator and
+# scenario logs all land in out/; keys/ holds the fetched platform test key and the throwaway
+# developer and notary keys that build.sh generates.
+android-reference/out/
+android-reference/keys/
+android-reference/**/build/
+android-reference/**/.gradle/
+android-reference/local.properties
+*.apk
+*.dex
+*.jks
+*.keystore
+*.pk8
+*.p12
+*.log
+
+# Assistant and agent configuration: never part of the project
+AGENTS.md
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+.cursor/
+.cursorrules
+.windsurfrules
+.aider*
+.codex/
+.gemini/
+GEMINI.md
+.copilot/
+copilot-instructions.md

@@ -1,0 +1,6 @@
+{
+  "_comment": "Simulated index of reproducible rebuilds: the APK digest a public rebuild produced for each package and version. Filled in by scripts/build.sh.",
+  "rebuilds": [
+    { "package": "org.appfair.sample.hello", "version_code": 1, "sha256": "@SAMPLE_V1_SHA256@" }
+  ]
+}

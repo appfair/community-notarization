@@ -1,0 +1,6 @@
+---
+import { res } from '../generated/res.generated';
+interface Props { name: keyof typeof res.vectors; class?: string; }
+const { name, class: className } = Astro.props;
+---
+<svg class:list={['icon', className]} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={res.vectors[name]} /></svg>

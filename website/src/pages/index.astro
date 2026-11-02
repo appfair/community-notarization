@@ -1,0 +1,164 @@
+---
+import { res } from '../generated/res.generated';
+import { apps, notaries, verdictLabels, verdictIcons, customOptionsFor, advRegistrations, advLabels } from '../lib/model';
+import Icon from '../components/Icon.astro';
+import LiveOverview from '../components/LiveOverview.astro';
+import ProposalOverview from '../components/ProposalOverview.astro';
+import Specification from '../components/Specification.astro';
+import SimulationSettings from '../components/SimulationSettings.astro';
+import PlatformSettings from '../components/PlatformSettings.astro';
+import '../styles/global.css';
+const s = res.str;
+const revision = s.draft_revision(res.assets.document.revision);
+const initial = apps[0];
+const dock = [
+  { icon: 'phone', label: s.phone_app, color: 'mint' },
+  { icon: 'chat', label: s.messages_app, color: 'blue' },
+  { icon: 'globe', label: s.browser_app, color: 'peach' },
+  { icon: 'camera', label: s.camera_app, color: 'lavender' },
+] as const;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={s.page_description()} />
+  <meta name="theme-color" content="#ffffff" />
+  <title>{s.page_title()}</title>
+</head>
+<body>
+  <a class="skip-link" href="#simulator">{s.skip_link()}</a>
+  <main class="wrap">
+    <header class="draft-status">
+      <h1><span class="draft-title">{s.draft_header_title()}</span>{' '}<span class="draft-meta"><span class="draft-label">{s.confidential_draft()}</span>{' '}<span class="draft-revision">{s.draft_header_revision(revision)}</span></span></h1>
+    </header>
+    <noscript><p class="no-script">{s.no_script()}</p></noscript>
+    <div class="simulator-viewport">
+    <section id="simulator" class="simulator" aria-label={s.lab_label()}>
+      <div class="lab">
+        <div class="lab-main">
+          <p class="instructions">{s.simulator_instructions()}</p>
+          <form id="install-form">
+            <fieldset id="controls">
+              <label class="field-label" for="app-select">{s.choose_app()}</label>
+              <div class="app-picker">
+                <span id="selected-icon" class:list={['app-icon', initial.color]}><Icon name={initial.icon} /></span>
+                <select id="app-select" name="app">{apps.map(app => <option value={app.id}>{app.file}</option>)}</select>
+                <button id="install-button" class="button primary" type="submit"><span id="install-label">{s.install()}</span><Icon name="arrow" /></button>
+              </div>
+              <div id="adv-notice" class="adv-notice" hidden>
+                <p id="adv-notice-text"></p>
+                <a href="https://support.google.com/android/answer/17588095?hl=en">{s.adv_source()}</a>
+              </div>
+              <div class="notaries-header"><h2>{s.notaries_heading()}</h2><span id="active-count">{s.active_count(5, 5)}</span></div>
+              <p class="notaries-help">{s.notaries_help()}</p>
+              <div class="notary-list">
+                {notaries.map((notary, index) => <div class="notary-row" data-notary={notary.id}>
+                  <label class:list={['notary-toggle', { required: notary.required }]}>
+                  <input type="checkbox" name="notary" value={notary.id} checked disabled={notary.required} />
+                  <span class="notary-copy"><strong>{notary.name()} <span class="notary-code">({notary.code})</span></strong><small>{notary.description()}</small></span>
+                  </label>
+                  <span class:list={['verdict-badge', initial.verdicts[index]]} data-verdict={index}><Icon name={verdictIcons[initial.verdicts[index]]} /><span>{notary.id === 'adv' ? advLabels[initial.advRegistration]() : verdictLabels[initial.verdicts[index]]()}</span></span>
+                  <select class="custom-response" data-response={index} aria-label={s.custom_response_label(notary.name())} hidden disabled>
+                    {notary.id === 'adv'
+                      ? advRegistrations.map(status => <option value={status}>{advLabels[status]()}</option>)
+                      : customOptionsFor(notary.id).map(verdict => <option value={verdict}>{verdictLabels[verdict]()}</option>)}
+                  </select>
+                </div>)}
+              </div>
+              <details id="adv-settings" class="adv-settings" hidden>
+                <summary>{s.adv_settings()}</summary>
+                <p>{s.adv_scope()}</p>
+                <label for="adv-flow">{s.adv_flow()}</label>
+                <select id="adv-flow">
+                  <option value="off">{s.adv_flow_off()}</option>
+                  <option value="waiting">{s.adv_flow_waiting()}</option>
+                  <option value="ready">{s.adv_flow_ready()}</option>
+                  <option value="seven-days">{s.adv_flow_seven()}</option>
+                  <option value="indefinite">{s.adv_flow_indefinite()}</option>
+                  <option value="expired">{s.adv_expired_title()}</option>
+                </select>
+                <p>{s.adv_flow_note()}</p>
+              </details>
+              <PlatformSettings />
+              <SimulationSettings />
+            </fieldset>
+          </form>
+          <div id="prediction" class="prediction allow" aria-live="polite">
+            <span id="prediction-icon" class="prediction-icon"><Icon name="check" /></span>
+            <div><small>{s.result_label()}</small><strong id="prediction-title">{s.prediction_allow()}</strong><p id="prediction-detail">{s.prediction_allow_detail()}</p></div>
+          </div>
+        </div>
+        <p id="pending-hint" class="pending-hint" hidden>{s.pending_hint()}</p>
+        <p class="fiction-note">{s.fiction_notice()}</p>
+      </div>
+      <div class="device-stage">
+        <p id="platform-status" class="platform-status">{s.platform_status_legacy()}</p>
+        <div class="phone-frame">
+        <div class="phone" role="region" aria-label={s.device_description()}>
+          <span class="hardware-button power"></span><span class="hardware-button volume"></span>
+          <div class="phone-screen">
+            <div class="wallpaper" aria-hidden="true"><i class="shape-one"></i><i class="shape-two"></i><i class="shape-three"></i></div>
+            <div class="status-bar" aria-hidden="true"><span>{s.status_time()}</span><span class="status-icons"><Icon name="wifi" /><Icon name="battery" /></span></div>
+            <div class="camera-cutout" aria-hidden="true"></div>
+            <div id="home-screen" class="home-screen">
+              <button id="report-notification" class="report-notification" type="button" hidden><strong>{s.notification_title()}</strong><span>{s.notification_detail()}</span></button>
+              <div class="date-weather"><span>{s.home_date()}</span><span><Icon name="sun" />{s.weather()}</span></div>
+              <div class="home-clock" aria-hidden="true">{s.home_time()}</div>
+              <div class="home-apps">
+                <div id="notary-apps" class="notary-apps" role="group" aria-label={s.notary_apps_label()}>
+                  {notaries.filter(notary => !notary.required).map(notary => <div class="notary-app" data-provider-app={notary.id} role="img" aria-label={s.notary_app_installed(notary.name())} title={notary.name()}>
+                    <span class:list={['app-icon', notary.appColor]}><Icon name={notary.appIcon} /></span>
+                    <span>{notary.id === 'fossr' ? notary.code : notary.name()}</span>
+                  </div>)}
+                </div>
+                <div id="installed-apps" class="installed-apps"></div>
+              </div>
+              <div class="home-bottom">
+                <div class="dock">{dock.map(item => <div class="dock-app"><span class:list={['app-icon', item.color]}><Icon name={item.icon} /></span><small>{item.label()}</small></div>)}</div>
+                <div class="phone-search"><Icon name="search" /><span>{s.search_placeholder()}</span><span aria-hidden="true">✦</span></div>
+              </div>
+            </div>
+            <div id="dialog-overlay" class="dialog-overlay" hidden>
+              <section id="install-dialog" class="android-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-description" tabindex="-1">
+                <div class="installer-label"><Icon name="shield" /><span id="dialog-owner">{s.installer_label()}</span></div>
+                <div id="dialog-app-icon" class="app-icon mint"><Icon name="calculator" /></div>
+                <div id="dialog-file" class="dialog-file"></div>
+                <h2 id="dialog-title"></h2>
+                <p id="dialog-description"></p>
+                <div id="checking-progress" class="checking-progress" hidden><span></span></div>
+                <div id="dialog-verdicts" class="dialog-verdicts"></div>
+                <div id="adv-duration-control" class="adv-duration-control" hidden>
+                  <label for="adv-duration">{s.adv_duration()}</label>
+                  <select id="adv-duration">
+                    <option value="seven-days">{s.adv_duration_seven()}</option>
+                    <option value="indefinite">{s.adv_duration_indefinite()}</option>
+                  </select>
+                </div>
+                <p id="adv-simulation-note" hidden>{s.adv_simulation_note()}</p>
+                <div id="dialog-actions" class="dialog-actions">
+                  <button id="cancel-button" class="android-button secondary" type="button">{s.cancel()}</button>
+                  <button id="confirm-button" class="android-button" type="button">{s.install()}</button>
+                  <button id="adv-action-button" class="android-button" type="button" hidden></button>
+                  <button id="done-button" class="android-button" type="button">{s.done()}</button>
+                </div>
+                <button id="review-timeout-button" class="reset-button" type="button" hidden>{s.review_timeout()}</button>
+              </section>
+            </div>
+            <div class="gesture-bar" aria-hidden="true"></div>
+          </div>
+        </div>
+        </div>
+        <button id="reset-button" class="reset-button" type="button"><Icon name="reset" />{s.reset()}</button>
+      </div>
+      <LiveOverview />
+    </section>
+    </div>
+    <ProposalOverview />
+    <Specification />
+    <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+  </main>
+  <script>import '../lib/simulator'; import '../lib/draft-header'; import '../lib/simulator-layout';</script>
+</body>
+</html>

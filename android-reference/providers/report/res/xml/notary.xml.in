@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The consumer-review notary. Its service answers from signed attestations it holds on the
+     device (the way a store could carry attestations), so the coordinator validates them
+     against the issuer key declared here and shows them as signed attestations. -->
+<notary
+    protocolVersion="1"
+    providerId="org.appfair.notary.report"
+    transport="service"
+    service=".ReviewNotaryService"
+    issuerKeys="@REPORT_PUBKEY@"
+    local="true"
+    name="Consumer Reporting"
+    question="Has this app been reviewed for consumer-friendliness?">
+    <data fields="packageName,versionCode,apkSha256,signingCertificateSha256,language" />
+</notary>

@@ -1,0 +1,105 @@
+---
+import { res } from '../generated/res.generated';
+const s = res.str;
+interface Props { kind: 'architecture' | 'policy' | 'offline' | 'adv' | 'constraints' }
+const { kind } = Astro.props;
+type Node = { x: number; y: number; width: number; lines: string[]; tone?: string };
+type Edge = { path: string; label?: string; x?: number; y?: number };
+const diagrams: Record<Props['kind'], { title: string; description: string; height: number; nodes: Node[]; edges: Edge[] }> = {
+  architecture: {
+    title: s.diagram_arch_title(), description: s.diagram_arch_desc(), height: 250,
+    nodes: [
+      { x: 10, y: 90, width: 165, lines: [s.diagram_installer()] },
+      { x: 240, y: 90, width: 185, lines: [s.diagram_coordinator()] },
+      { x: 535, y: 10, width: 250, lines: [s.diagram_endpoint()] },
+      { x: 535, y: 165, width: 250, lines: [s.diagram_app_service(), s.diagram_local_remote()] },
+    ],
+    edges: [
+      { path: 'M175 118 H240', label: s.diagram_request(), x: 208, y: 80 },
+      { path: 'M425 105 H475 V38 H535', label: s.diagram_https(), x: 475, y: 20 },
+      { path: 'M425 131 H475 V193 H535', label: s.diagram_binder(), x: 475, y: 225 },
+      { path: 'M785 38 H865 V118 H425', label: s.diagram_result(), x: 677, y: 105 },
+      { path: 'M785 193 H865 V118' },
+      { path: 'M330 146 V240 H92 V146', label: s.diagram_allow_reject(), x: 205, y: 231 },
+    ],
+  },
+  policy: {
+    title: s.diagram_policy_title(), description: s.diagram_policy_desc(), height: 245,
+    nodes: [
+      { x: 10, y: 92, width: 170, lines: [s.diagram_assessments()] },
+      { x: 285, y: 10, width: 195, lines: [s.diagram_all_approve()] },
+      { x: 285, y: 92, width: 195, lines: [s.diagram_all_deny()] },
+      { x: 285, y: 174, width: 195, lines: [s.diagram_other()] },
+      { x: 600, y: 10, width: 265, lines: [s.diagram_install()], tone: 'positive' },
+      { x: 600, y: 92, width: 265, lines: [s.diagram_block()], tone: 'negative' },
+      { x: 600, y: 174, width: 265, lines: [s.diagram_review(), s.diagram_choice()], tone: 'review' },
+    ],
+    edges: [ {path:'M180 120 H230 V38 H285'}, {path:'M230 120 H285'}, {path:'M230 120 V202 H285'}, {path:'M480 38 H600'}, {path:'M480 120 H600'}, {path:'M480 202 H600'} ],
+  },
+  offline: {
+    title: s.diagram_offline_title(), description: s.diagram_offline_desc(), height: 190,
+    nodes: [
+      { x: 10, y: 65, width: 195, lines: [s.diagram_same_file()] },
+      { x: 290, y: 10, width: 220, lines: [s.diagram_valid_evidence()] },
+      { x: 290, y: 120, width: 220, lines: [s.diagram_missing_evidence()] },
+      { x: 610, y: 10, width: 260, lines: [s.diagram_evaluate()] },
+      { x: 610, y: 120, width: 260, lines: [s.diagram_review_complete(), s.diagram_reject_incremental()], tone: 'review' },
+    ],
+    edges: [
+      {path:'M205 93 H245 V38 H290'}, {path:'M245 93 V148 H290'},
+      {path:'M510 38 H610'}, {path:'M510 148 H610'},
+    ],
+  },
+  constraints: {
+    title: s.diagram_constraints_title(), description: s.diagram_constraints_desc(), height: 265,
+    nodes: [
+      {x: 10, y: 100, width: 205, lines: [s.diagram_platform_gate()]},
+      {x: 300, y: 10, width: 230, lines: [s.diagram_platform_deny()]},
+      {x: 300, y: 100, width: 230, lines: [s.diagram_staged()]},
+      {x: 300, y: 190, width: 230, lines: [s.diagram_incremental()]},
+      {x: 610, y: 10, width: 265, lines: [s.diagram_error_report()], tone: 'negative'},
+      {x: 610, y: 100, width: 265, lines: [s.diagram_evaluate(), s.diagram_review_if_needed()], tone: 'review'},
+      {x: 610, y: 190, width: 265, lines: [s.diagram_cache_or_reject()]},
+    ],
+    edges: [
+      {path: 'M215 128 H255 V38 H300'},
+      {path: 'M255 128 H300', label: s.diagram_platform_pass(), x: 240, y: 91},
+      {path: 'M255 128 V218 H300'},
+      {path: 'M530 38 H610'}, {path: 'M530 128 H610'}, {path: 'M530 218 H610'},
+    ],
+  },
+  adv: {
+    title: s.diagram_adv_title(), description: s.diagram_adv_desc(), height: 240,
+    nodes: [
+      {x:10,y:10,width:170,lines:[s.diagram_registered()]},
+      {x:680,y:10,width:185,lines:[s.diagram_install()],tone:'positive'},
+      {x:10,y:100,width:170,lines:[s.diagram_unregistered()]},
+      {x:225,y:100,width:180,lines:[s.diagram_setup()]},
+      {x:450,y:100,width:180,lines:[s.diagram_wait()]},
+      {x:680,y:100,width:185,lines:[s.diagram_authenticate()]},
+      {x:310,y:180,width:320,lines:[s.diagram_duration(),s.diagram_confirm()],tone:'review'},
+    ],
+    edges:[{path:'M180 38 H680'},{path:'M180 128 H225'},{path:'M405 128 H450'},{path:'M630 128 H680'},{path:'M772 156 V208 H630'},{path:'M95 156 V208 H310',label:s.diagram_enabled(),x:190,y:195}],
+  },
+};
+const diagram = diagrams[kind];
+const marker = `arrow-${kind}`;
+---
+<figure class="flow-diagram">
+  <div class="diagram-scroll" tabindex="0" role="region" aria-label={diagram.title}>
+    <svg viewBox={`0 0 890 ${diagram.height}`} role="img" aria-labelledby={`title-${kind} desc-${kind}`}>
+      <title id={`title-${kind}`}>{diagram.title}</title>
+      <desc id={`desc-${kind}`}>{diagram.description}</desc>
+      <defs><marker id={marker} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#64748b" /></marker></defs>
+      {diagram.edges.map(edge => <g>
+        <path d={edge.path} fill="none" stroke="#64748b" stroke-width="1.5" marker-end={`url(#${marker})`} />
+        {edge.label && <text class="edge-label" x={edge.x} y={edge.y} text-anchor="middle">{edge.label}</text>}
+      </g>)}
+      {diagram.nodes.map(node => <g class:list={['flow-node', node.tone]}>
+        <rect x={node.x} y={node.y} width={node.width} height="56" rx="6" />
+        {node.lines.map((line, index) => <text x={node.x + node.width / 2} y={node.y + (node.lines.length === 1 ? 33 : 23 + index * 18)} text-anchor="middle">{line}</text>)}
+      </g>)}
+    </svg>
+  </div>
+  <figcaption>{diagram.title}</figcaption>
+</figure>

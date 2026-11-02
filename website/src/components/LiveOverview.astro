@@ -1,0 +1,89 @@
+---
+import { res } from '../generated/res.generated';
+import { apps, notaries, verdictLabels } from '../lib/model';
+const s = res.str;
+const initial = apps[0];
+const legend = [
+  ['approve', s.overview_legend_approve()],
+  ['disapprove', s.overview_legend_deny()],
+  ['age16', s.overview_legend_advice()],
+  ['abstain', s.overview_legend_abstain()],
+  ['inactive', s.overview_legend_inactive()],
+];
+---
+  <figure id="proposal-overview" class="live-overview">
+    <figcaption class="overview-caption">
+      <strong>{s.overview_preview()}</strong>
+      <span id="overview-outcome" role="status">{s.overview_result(s.prediction_allow())}</span>
+    </figcaption>
+    <div class="overview-scroll" role="region" aria-label={s.overview_diagram_title()}>
+      <svg id="overview-diagram" viewBox="0 0 760 564" role="img" aria-labelledby="overview-svg-title overview-svg-desc">
+        <title id="overview-svg-title">{s.overview_diagram_title()}</title>
+        <desc id="overview-svg-desc">{s.overview_diagram_desc()}</desc>
+        <defs>
+          <marker id="overview-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="context-stroke" /></marker>
+        </defs>
+        <path class="overview-wire" d="M216 51H252" marker-end="url(#overview-arrow)"><title>{s.overview_install_request()}</title></path>
+        <path class="overview-wire" d="M432 51H468" marker-start="url(#overview-arrow)" marker-end="url(#overview-arrow)"><title>{s.overview_verify_request()}</title></path>
+        <path class="overview-wire" d="M468 114H28V512" />
+        <g class="overview-base-node">
+          <rect x="16" y="16" width="200" height="70" rx="10" />
+          <g transform="translate(30 28)" class="overview-icon"><path id="overview-app-icon" d={res.vectors[initial.icon]} /></g>
+          <text id="overview-app" class="overview-node-title" x="62" y="45">{initial.file}</text>
+          <text class="overview-detail" x="30" y="69">{s.overview_apk()}</text>
+        </g>
+        <g class="overview-base-node">
+          <rect x="252" y="16" width="180" height="70" rx="10" />
+          <text class="overview-node-title" x="266" y="45">{s.overview_installer()}</text>
+          <text class="overview-detail" x="266" y="69">{s.overview_installer_detail()}</text>
+        </g>
+        <g class="overview-base-node overview-coordinator">
+          <rect x="468" y="16" width="276" height="112" rx="10" />
+          <text class="overview-node-title" x="482" y="40">{s.overview_coordinator()}</text>
+          <text id="overview-coordinator-name" class="overview-detail" x="482" y="61">{s.overview_google_coordinator()}</text>
+          <text id="overview-coordinator-id" class="overview-package" x="482" y="82">{res.assets.providers.coordinators.google}</text>
+          <g id="overview-cache" class="overview-base-node">
+            <rect x="480" y="94" width="252" height="26" rx="5" />
+            <text class="overview-detail" x="488" y="111">{s.overview_cache()}</text>
+            <text id="overview-cache-count" class="overview-detail" x="724" y="111" text-anchor="end">{s.overview_cache_count(0)}</text>
+          </g>
+        </g>
+        <g id="overview-native" data-hidden>
+          <path class="overview-native-wire" d="M342 86V136H244V156" marker-end="url(#overview-arrow)" />
+          <text id="overview-native-label" class="overview-wire-label" x="64" y="131">{s.overview_native()}</text>
+        </g>
+        <text class="overview-column" x="64" y="146">{s.overview_apps()}</text>
+        <text class="overview-column" x="526" y="146">{s.overview_evidence()}</text>
+        {notaries.map((notary, i) => {
+          const y = 156 + i * 80;
+          const local = notary.defaultRoute === 'service-local';
+          return <g data-overview-provider={notary.id} data-state="approve" data-route={notary.defaultRoute}>
+            <path class="overview-provider-wire" d={`M28 ${y + 36}H64`} marker-start="url(#overview-arrow)" marker-end="url(#overview-arrow)" />
+            <path class="overview-direct-wire" d={`M28 ${y + 36}V${y + 76}H510V${y + 36}H526`} marker-end="url(#overview-arrow)" data-hidden />
+            <g class="overview-provider-node">
+              <rect class="overview-provider-box" x="64" y={y} width="374" height="72" rx="10" />
+              <g transform={`translate(78 ${y + 8})`} class="overview-icon"><path d={res.vectors[notary.appIcon]} /></g>
+              <text class="overview-node-title" x="112" y={y + 22}>{notary.name()}</text>
+              {notary.id === 'adv' ? <a href="https://play.google.com/store/apps/details?id=com.google.android.verifier" aria-label={s.overview_adv_link()}><text class="overview-package overview-package-link" x="78" y={y + 40}>{notary.packageId}</text></a> : <text class="overview-package" x="78" y={y + 40}>{notary.packageId}</text>}
+              <circle class="overview-status-dot" cx="83" cy={y + 58} r="4" />
+              <text class="overview-verdict" data-overview-verdict x="96" y={y + 62}>{verdictLabels[initial.verdicts[i]]()}</text>
+              <text class="overview-source" data-overview-source x="424" y={y + 62} text-anchor="end">{local ? s.source_local() : s.source_fresh()}</text>
+            </g>
+            <g class="overview-evidence-path">
+              <path class="overview-source-wire" d={`M438 ${y + 36}H526`} marker-start="url(#overview-arrow)" marker-end="url(#overview-arrow)" />
+              <text data-overview-transport class="overview-wire-label" x="482" y={y + 24} text-anchor="middle">{local ? s.overview_lookup() : s.overview_network()}</text>
+            </g>
+            <g class="overview-evidence-node">
+              <rect x="526" y={y + 2} width="218" height="68" rx="10" />
+              <g transform={`translate(540 ${y + 12})`} class="overview-icon"><path data-overview-evidence-icon d={local ? res.vectors.database : res.vectors.server} /></g>
+              <text data-overview-evidence-title class="overview-node-title" x="572" y={y + 29}>{local ? s.overview_database() : s.overview_server()}</text>
+              <text data-overview-evidence-detail class="overview-detail" x="540" y={y + 54}>{local ? s.overview_database_detail() : i === 0 ? s.overview_adv_server() : s.overview_server_detail()}</text>
+            </g>
+          </g>;
+        })}
+      </svg>
+    </div>
+    <ul class="overview-legend" aria-label={s.overview_preview()}>{legend.map(([state, label]) => <li data-state={state}><span></span>{label}</li>)}</ul>
+    <p class="overview-note">{s.overview_note()}</p>
+    <ul id="overview-assessments" class="sr-only"></ul>
+  </figure>

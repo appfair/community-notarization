@@ -1,0 +1,112 @@
+---
+import { res } from '../generated/res.generated';
+import FlowDiagram from './FlowDiagram.astro';
+const s = res.str;
+const contract = [
+  [s.spec_contract_registration_label, s.spec_contract_registration],
+  [s.spec_contract_request_label, s.spec_contract_request],
+  [s.spec_contract_response_label, s.spec_contract_response],
+  [s.spec_contract_signature_label, s.spec_contract_signature],
+  [s.spec_contract_service_label, s.spec_contract_service],
+  [s.spec_contract_lifecycle_label, s.spec_contract_lifecycle],
+  [s.spec_contract_privacy_label, s.spec_contract_privacy],
+];
+---
+<article id="specification" class="specification" aria-labelledby="spec-title">
+  <h2 id="spec-title">{s.spec_title()}</h2>
+  <p>{s.spec_intro()}</p>
+  <p>{s.spec_scope()}</p>
+  <section aria-labelledby="integration-title">
+    <h3 id="integration-title">{s.spec_integration_title()}</h3>
+    <p>{s.spec_integration_body()} <a href="https://developer.android.com/reference/android/content/pm/PackageManager#verifyPendingInstall(int,int)">{s.source_package_verifier()}</a></p>
+    <h3>{s.spec_compatibility_title()}</h3>
+    <p>{s.spec_compatibility_body()}</p>
+    <p>{s.spec_compatibility_target()} <a href="https://developer.android.com/reference/android/content/pm/PackageInstaller#EXTRA_DEVELOPER_VERIFICATION_FAILURE_REASON">{s.source_native_adv()}</a></p>
+    <p>{s.spec_compatibility_note()}</p>
+    <FlowDiagram kind="constraints" />
+  </section>
+  <section aria-labelledby="providers-title">
+    <h3 id="providers-title">{s.spec_provider_title()}</h3>
+    <p>{s.spec_provider_body()}</p>
+    <p>{s.spec_provider_transport()}</p>
+    <FlowDiagram kind="architecture" />
+    <p>{s.spec_provider_identity()}</p>
+  </section>
+  <section aria-labelledby="limits-title">
+    <h3 id="limits-title">{s.spec_limits_title()}</h3>
+    <p>{s.spec_limits_timeout()} <a href="https://developer.android.com/reference/android/content/pm/PackageManager#extendVerificationTimeout(int,int,long)">{s.source_package_verifier()}</a></p>
+    <p>{s.spec_limits_incremental()} <a href="https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/master/services/core/java/com/android/server/pm/VerificationUtils.java">{s.source_streaming()}</a></p>
+    <p>{s.spec_limits_boundary()}</p>
+    <p>{s.spec_limits_notifications()}</p>
+  </section>
+  <section aria-labelledby="policy-title">
+    <h3 id="policy-title">{s.spec_policy_title()}</h3>
+    <p>{s.spec_policy_body()}</p>
+    <ol class="policy-order">
+      <li>{s.spec_order_scope()}</li>
+      <li>{s.spec_order_platform()}</li>
+      <li>{s.spec_order_baseline()}</li>
+      <li>{s.spec_order_evidence()}</li>
+      <li>{s.spec_order_decision()}</li>
+    </ol>
+    <table>
+      <thead><tr><th scope="col">{s.spec_policy_condition()}</th><th scope="col">{s.spec_policy_result()}</th></tr></thead>
+      <tbody>
+        <tr><td>{s.spec_policy_all_approve()}</td><td>{s.spec_policy_allow()}</td></tr>
+        <tr><td>{s.spec_policy_all_deny()}</td><td>{s.spec_policy_block()}</td></tr>
+        <tr><td>{s.spec_policy_other()}</td><td>{s.spec_policy_review()}</td></tr>
+      </tbody>
+    </table>
+    <p>{s.spec_policy_note()}</p>
+    <FlowDiagram kind="policy" />
+    <p>{s.spec_policy_dialog()}</p>
+  </section>
+  <section aria-labelledby="adv-title">
+    <h3 id="adv-title">{s.spec_adv_title()}</h3>
+    <p>{s.spec_adv_body()} <a href="https://support.google.com/android/answer/17588095?hl=en">{s.adv_source()}</a></p>
+    <FlowDiagram kind="adv" />
+    <p>{s.spec_adv_limit()}</p>
+  </section>
+  <section aria-labelledby="evidence-title">
+    <h3 id="evidence-title">{s.spec_evidence_title()}</h3>
+    <p>{s.spec_evidence_body()}</p>
+    <p>{s.spec_evidence_scope()}</p>
+    <FlowDiagram kind="offline" />
+    <p>{s.spec_evidence_demo()}</p>
+  </section>
+  <details class="spec-details">
+    <summary>{s.spec_contract_title()}</summary>
+    <dl>{contract.map(([label, body]) => <><dt>{label()}</dt><dd>{body()}</dd></>)}</dl>
+    <details class="protocol-examples">
+      <summary>{s.spec_example_title()}</summary>
+      <p>{s.spec_example_intro()}</p>
+      <h4>{s.spec_example_manifest()}</h4>
+      <pre><code>{res.assets.protocolExamples.manifest}</code></pre>
+      <h4>{s.spec_example_config()}</h4>
+      <pre><code>{res.assets.protocolExamples.configuration}</code></pre>
+      <h4>{s.spec_example_request()}</h4>
+      <pre><code>{res.assets.protocolExamples.request}</code></pre>
+      <h4>{s.spec_example_response()}</h4>
+      <pre><code>{res.assets.protocolExamples.response}</code></pre>
+    </details>
+  </details>
+  <details class="spec-details">
+    <summary>{s.spec_plan_title()}</summary>
+    <p>{s.spec_plan_body()}</p>
+    <p>{s.spec_plan_validation()}</p>
+    <p>{s.spec_plan_extensions()}</p>
+    <p>{s.spec_prototype_note()}</p>
+    <p>{s.spec_source_analysis()}</p>
+  </details>
+  <footer class="spec-sources">
+    <h3>{s.spec_sources_title()}</h3>
+    <ul>
+      <li><a href="https://github.com/appfair/aosp-verifier/">{s.source_prototype()}</a></li>
+      <li><a href="https://developer.android.com/guide/topics/manifest/meta-data-element">{s.source_manifest()}</a></li>
+      <li><a href="https://developer.android.com/develop/background-work/services/bound-services">{s.source_services()}</a></li>
+      <li><a href="https://developer.android.com/develop/background-work/services/aidl">{s.source_aidl()}</a></li>
+      <li><a href="https://developer.android.com/developer-verification/guides/faq">{s.source_adv_faq()}</a></li>
+      <li><a href="https://raw.githubusercontent.com/aosp-mirror/platform_frameworks_base/master/services/core/java/com/android/server/pm/VerifyingSession.java">{s.source_hook()}</a></li>
+    </ul>
+  </footer>
+</article>

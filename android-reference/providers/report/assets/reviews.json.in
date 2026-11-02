@@ -1,0 +1,17 @@
+{
+  "_comment": "Simulated consumer reviews, one per package. The service signs each answer with signing.key so the coordinator can verify it against the key declared in the notary metadata.",
+  "reviews": [
+    {
+      "package": "org.appfair.sample.hello",
+      "verdict": "approve",
+      "reasonCode": "NO_CONCERNS",
+      "explanation": "The example review found consumer-friendly practices."
+    },
+    {
+      "package": "org.appfair.sample.patterns",
+      "verdict": "deny",
+      "reasonCode": "DARK_PATTERNS",
+      "explanation": "The example review flagged manipulative design and dark patterns."
+    }
+  ]
+}

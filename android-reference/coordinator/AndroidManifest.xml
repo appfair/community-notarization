@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.appfair.notarization"
+    android:versionCode="2"
+    android:versionName="0.2">
+
+    <uses-sdk android:minSdkVersion="34" android:targetSdkVersion="36" />
+
+    <!-- signature|privileged: granted because the coordinator is signed with the platform key and
+         installed under /system/app. PackageManagerService only sends PACKAGE_NEEDS_VERIFICATION to
+         system receivers holding this permission, and only accepts verifyPendingInstall() from them.
+         Provider services check that their caller holds it. -->
+    <uses-permission android:name="android.permission.PACKAGE_VERIFICATION_AGENT" />
+    <!-- signature: the review dialog is opened from a background service. -->
+    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- The HTTPS notary adapter. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Provider discovery reads the manifest metadata of every installed app. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- The settings screen stores the enabled notaries in a global setting. -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_notary"
+        android:directBootAware="true">
+
+        <!-- Entry point. PackageManagerService discovers the required verifier at boot by querying
+             system receivers of PACKAGE_NEEDS_VERIFICATION with the package-archive MIME type. -->
+        <receiver
+            android:name=".VerificationReceiver"
+            android:exported="true"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_NEEDS_VERIFICATION" />
+                <action android:name="android.intent.action.PACKAGE_VERIFIED" />
+                <data android:mimeType="application/vnd.android.package-archive" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Runs one verification (facts, assessments, policy) off the receiver's thread. -->
+        <service
+            android:name=".VerificationService"
+            android:exported="false"
+            android:directBootAware="true" />
+
+        <!-- The review dialog: shown when the policy cannot decide on its own. -->
+        <activity
+            android:name=".ReviewActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar" />
+
+        <!-- The notary settings page (stands in for a system settings entry). -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="@string/settings_label"
+            android:theme="@android:style/Theme.DeviceDefault.Light">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

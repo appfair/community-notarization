@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The malware-scan notary, reached over HTTPS. The endpoint, its ECDSA P-256 signing key
+     and the certificate pin of the test server are filled in by scripts/build.sh. The request
+     carries the identity fields and the language only, never the file. -->
+<notary
+    protocolVersion="1"
+    providerId="org.appfair.notary.scan"
+    transport="https"
+    endpoint="@SCAN_ENDPOINT@"
+    keys="@SCAN_PUBKEY@"
+    tls="sha256:@SCAN_TLS_PIN@"
+    name="VirusTotality"
+    question="Has this app been scanned for malware?">
+    <data fields="packageName,versionCode,apkSha256,signingCertificateSha256,language" />
+</notary>

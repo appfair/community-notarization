@@ -1,0 +1,34 @@
+---
+import { res } from '../generated/res.generated';
+const s = res.str;
+---
+<details id="platform-settings" class="adv-settings">
+  <summary>{s.platform_settings()}</summary>
+  <label for="platform">{s.platform_label()}</label>
+  <select id="platform">
+    <option value="legacy">{s.platform_legacy()}</option>
+    <option value="platform">{s.platform_native()}</option>
+    <option value="aosp">{s.platform_aosp()}</option>
+  </select>
+  <p>{s.platform_help()}</p>
+  <div id="native-adv-settings" hidden>
+    <label for="coordination">{s.coordination_label()}</label>
+    <select id="coordination"><option value="independent">{s.coordination_independent()}</option><option value="coordinated">{s.coordination_updated()}</option></select>
+    <label for="installer-target">{s.installer_target_label()}</label>
+    <select id="installer-target"><option value="modern">{s.installer_modern()}</option><option value="legacy-user">{s.installer_legacy_user()}</option><option value="legacy-privileged">{s.installer_legacy_privileged()}</option></select>
+    <p>{s.installer_target_help()}</p>
+  </div>
+  <label for="adv-method">{s.adv_method()}</label>
+  <select id="adv-method">
+    <option value="standard">{s.adv_method_standard()}</option>
+    <option value="adb">{s.adv_method_adb()}</option>
+    <option value="managed">{s.adv_method_managed()}</option>
+  </select>
+  <label for="delivery">{s.delivery_label()}</label>
+  <select id="delivery"><option value="staged">{s.delivery_staged()}</option><option value="incremental">{s.delivery_incremental()}</option></select>
+  <label id="extension-setting" class="setting-toggle"><input id="extension-available" type="checkbox" checked />{s.extension_available()}</label>
+  <div id="incremental-settings" hidden>
+    <label class="setting-toggle"><input id="identity-available" type="checkbox" checked />{s.identity_available()}</label>
+    <p>{s.incremental_help()}</p>
+  </div>
+</details>

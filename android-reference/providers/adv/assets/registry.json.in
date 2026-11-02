@@ -1,0 +1,17 @@
+{
+  "_comment": "Simulated developer registry: which package names are registered to which signing certificate. Filled in by scripts/build.sh from the keys it generated.",
+  "developers": [
+    {
+      "package": "org.appfair.sample.hello",
+      "signer_sha256": "@SAMPLE_SIGNER@",
+      "developer": "Sample Developer (verified)",
+      "state": "registered"
+    },
+    {
+      "package": "org.appfair.sample.revoked",
+      "signer_sha256": "@SAMPLE_SIGNER@",
+      "developer": "Former Developer",
+      "state": "revoked"
+    }
+  ]
+}

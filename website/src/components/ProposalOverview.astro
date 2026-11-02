@@ -1,0 +1,15 @@
+---
+import { res } from '../generated/res.generated';
+const s = res.str;
+---
+<section id="proposal-introduction" class="proposal-overview" aria-labelledby="overview-title">
+  <h2 id="overview-title">{s.overview_title()}</h2>
+  <div class="overview-intro">
+    <p>{s.overview_intro()}</p>
+    <p>{s.overview_providers()}</p>
+    <p>{s.overview_integration()}</p>
+  </div>
+
+  <p class="overview-footnote">{s.overview_foss_note()} <a href="https://f-droid.org/en/packages/org.fdroid.fdroid/">{s.overview_foss_link()}</a></p>
+  <p class="overview-footnote">{s.overview_ids_note()} <a href="https://play.google.com/store/apps/details?id=com.google.android.verifier">{s.overview_adv_link()}</a></p>
+</section>

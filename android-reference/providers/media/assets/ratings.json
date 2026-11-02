@@ -1,0 +1,20 @@
+{
+  "_comment": "Simulated age-appropriateness ratings, keyed by package and optionally version.",
+  "ratings": [
+    {
+      "package": "org.appfair.sample.hello",
+      "version_code": 1,
+      "verdict": "approve",
+      "reasonCode": "ALL_AGES",
+      "explanation": "The example review found this app suitable for all ages."
+    },
+    {
+      "package": "org.appfair.sample.hello",
+      "version_code": 2,
+      "verdict": "advisory",
+      "minAge": 16,
+      "reasonCode": "AGE_16",
+      "explanation": "Recommended for ages 16 and up. Consider who will use this device."
+    }
+  ]
+}

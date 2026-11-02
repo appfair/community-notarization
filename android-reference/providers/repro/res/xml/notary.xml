@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The reproducible-build notary. It asks for the APK itself (apkFile) so that it can compare
+     the staged file with its rebuild; the user sees and accepts that access when enabling it. -->
+<notary
+    protocolVersion="1"
+    providerId="org.appfair.notary.repro"
+    transport="service"
+    service=".RebuildNotaryService"
+    name="F-Droid Open Source Software Rebuilder"
+    question="Can this app be rebuilt from its public source?">
+    <data fields="packageName,versionCode,apkSha256,signingCertificateSha256,apkFile" />
+</notary>

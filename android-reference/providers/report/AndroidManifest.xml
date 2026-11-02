@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.appfair.notary.report"
+    android:versionCode="1"
+    android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="33" android:targetSdkVersion="36" />
+    <application android:label="@string/app_name" android:icon="@drawable/ic_report">
+        <meta-data android:name="org.appfair.notarization.PROVIDER" android:resource="@xml/notary" />
+        <service
+            android:name=".ReviewNotaryService"
+            android:exported="true"
+            android:permission="android.permission.PACKAGE_VERIFICATION_AGENT">
+            <intent-filter>
+                <action android:name="org.appfair.notarization.NOTARY_SERVICE" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

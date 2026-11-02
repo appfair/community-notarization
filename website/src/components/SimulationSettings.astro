@@ -1,0 +1,39 @@
+---
+import { res } from '../generated/res.generated';
+import { notaries } from '../lib/model';
+const s = res.str;
+---
+<details id="simulation-settings" class="adv-settings">
+  <summary>{s.simulation_settings()}</summary>
+  <div class="settings-grid">
+    <div><label for="connection">{s.connection_label()}</label><select id="connection"><option value="online">{s.connection_online()}</option><option value="offline">{s.connection_offline()}</option></select></div>
+    <div><label for="artifact">{s.artifact_label()}</label><select id="artifact"><option value="original">{s.artifact_original()}</option><option value="updated">{s.artifact_updated()}</option></select></div>
+  </div>
+  <label class="setting-toggle"><input id="use-cache" type="checkbox" checked />{s.evidence_cache_label()}</label>
+  <p>{s.provider_attestation_help()}</p>
+  <h3>{s.provider_routes()}</h3>
+  {notaries.map(notary => <div class="route-row" data-route-row={notary.id}>
+    <label for={`route-${notary.id}`}>{notary.code}</label>
+    <select id={`route-${notary.id}`} data-route={notary.id} aria-label={s.route_label(notary.name())} disabled={notary.required}>
+      {notary.required ? <option value="builtin">{s.route_builtin()}</option> : <>
+        <option value="https">{s.route_https()}</option>
+        <option value="service-online" selected={notary.defaultRoute === 'service-online'}>{s.route_service_online()}</option>
+        <option value="service-local" selected={notary.defaultRoute === 'service-local'}>{s.route_service_local()}</option>
+        <option value="service-store">{s.route_service_store()}</option>
+      </>}
+    </select>
+  </div>)}
+  <p>{s.provider_routes_help()}</p>
+  <p id="cache-summary" role="status"></p>
+  <div class="settings-actions">
+    <button id="prepare-evidence" type="button">{s.prepare_evidence()}</button>
+    <button id="clear-evidence" type="button">{s.clear_evidence()}</button>
+    <button id="replace-provider" type="button">{s.replace_provider()}</button>
+  </div>
+  <p>{s.simulation_help()}</p>
+<div id="simulation-clock" class="simulation-clock">
+  <span id="elapsed-time">{s.elapsed_time(0)}</span>
+  <button id="advance-day" type="button">{s.advance_day()}</button>
+  <button id="advance-seven" type="button" hidden>{s.advance_seven()}</button>
+</div>
+</details>
