@@ -5,7 +5,8 @@
 # Expects an SDK with platform-tools, platforms;android-$API, build-tools, the emulator and
 # system-images;android-$API;default;$ARCH (scripts/create-avd.sh installs the image when a
 # sdkmanager is available). Exit status is the scenarios' status. Every script is run through
-# bash so that checkout file modes do not matter.
+# bash so that checkout file modes do not matter, and every wait has a timeout so that a lost
+# emulator fails the job instead of stalling it.
 source "$(dirname "$0")/common.sh"
 export HEADLESS=${HEADLESS:-1}
 S=$ROOT/scripts
@@ -22,7 +23,8 @@ log "build"
 bash "$S/build.sh"
 log "emulator"
 bash "$S/create-avd.sh"
-eval "$(bash "$S/start-emulator.sh" | tee /dev/stderr | sed -n 's/^export \(ANDROID_SERIAL=[^ ]*\).*/export \1/p')"
+bash "$S/start-emulator.sh"
+export ANDROID_SERIAL=$(cat "$OUT/emulator.serial")
 bash "$S/install-coordinator.sh"
 bash "$S/install-providers.sh"
 bash "$S/notary-server.sh" start
