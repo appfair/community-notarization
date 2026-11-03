@@ -57,6 +57,7 @@ subst() {
       -e "s|@SCAN_ENDPOINT@|$SCAN_ENDPOINT|g" -e "s|@SCAN_PUBKEY@|$SCAN_PUBKEY|g" \
       -e "s|@SCAN_TLS_PIN@|$SCAN_TLS_PIN|g" -e "s|@REPORT_PUBKEY@|$REPORT_PUBKEY|g" "$1"
 }
+EXTRA_ASSETS=()
 build_apk() {
   local src=$1 name=$2; shift 2
   local link=(--no-version-vectors); while [ "$1" != "--" ]; do link+=("$1"); shift; done; shift
@@ -64,6 +65,10 @@ build_apk() {
   rm -rf "$work"; mkdir -p "$work/gen" "$work/classes" "$work/dex" "$work/src"
   cp -R "$src"/. "$work/src/"
   for f in $(find "$work/src" -name '*.in'); do subst "$f" > "${f%.in}"; rm "$f"; done
+  for extra in "${EXTRA_ASSETS[@]:-}"; do   # name=path pairs added to the APK's assets, never to the source tree
+    [ -n "$extra" ] || continue
+    mkdir -p "$work/src/assets"; cp "${extra#*=}" "$work/src/assets/${extra%%=*}"
+  done
   [ -d "$work/src/assets" ] && link+=(-A "$work/src/assets")
   "$BT/aapt2" compile --dir "$work/src/res" -o "$work/res.zip"
   "$BT/aapt2" link -o "$work/unsigned.apk" -I "$PLATFORM" --manifest "$work/src/AndroidManifest.xml" \
@@ -91,14 +96,15 @@ SAMPLE_SIGNER=$("$BT/apksigner" verify --print-certs "$OUT/sample.apk" | sed -n 
 SAMPLE_V1_SHA256=$(shasum -a 256 "$OUT/sample.apk" | cut -d' ' -f1)
 
 # Provider apps are ordinary apps signed by their own developers; here all with the sample key.
-mkdir -p "$ROOT/providers/report/assets"; cp "$KEYS/notary-report.pkcs8.b64" "$ROOT/providers/report/assets/signing.key"
+EXTRA_ASSETS=()
 build_apk "$ROOT/providers/adv" provider-adv -- "${SAMPLE_SIGN[@]}"
 build_apk "$ROOT/providers/scan" provider-scan -- "${SAMPLE_SIGN[@]}"
 build_apk "$ROOT/providers/repro" provider-repro -- "${SAMPLE_SIGN[@]}"
+EXTRA_ASSETS=("signing.key=$KEYS/notary-report.pkcs8.b64")   # the review notary's attestation key
 build_apk "$ROOT/providers/report" provider-report -- "${SAMPLE_SIGN[@]}"
 build_apk "$ROOT/providers/report" provider-report-otherkey -- "${OTHER_SIGN[@]}"
+EXTRA_ASSETS=()
 build_apk "$ROOT/providers/media" provider-media -- "${SAMPLE_SIGN[@]}"
-rm -f "$ROOT/providers/report/assets/signing.key"
 
 cat > "$OUT/build-info.txt" <<EOF
 sample_signer_sha256=$SAMPLE_SIGNER

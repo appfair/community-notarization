@@ -58,3 +58,6 @@ copilot-instructions.md
 # Python bytecode from the scripts
 __pycache__/
 *.pyc
+
+# Keys that build.sh injects into provider APKs at build time (must never sit in the source tree)
+android-reference/providers/*/assets/signing.key

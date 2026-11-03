@@ -180,7 +180,7 @@ scenario_advonly() {  # only ADV participates: the ADV-only baseline, no communi
   start_install advonly
   finish_auto advonly ALLOW
   check "ADV-only baseline applied" log_has "ADV-only baseline" advonly
-  adb uninstall $SAMPLE_PKG >/dev/null; adb logcat -c
+  adb uninstall $SAMPLE_PKG >/dev/null 2>&1 || true; adb logcat -c
   start_install advonly2 "$OUT/sample-mismatch.apk"
   finish_auto advonly2 BLOCK
   check "mismatch was rejected by the baseline" log_has "requires Google's advanced flow" advonly2
@@ -200,7 +200,7 @@ scenario_cache() {  # a valid earlier answer stands in for a timed-out one
   log "Scenario cache: approve once, then the scan times out -> cached evidence -> installed silently"
   reset_device
   start_install cache1; finish_auto cache1 ALLOW
-  adb uninstall $SAMPLE_PKG >/dev/null; adb logcat -c
+  adb uninstall $SAMPLE_PKG >/dev/null 2>&1 || true; adb logcat -c
   scan_mode timeout
   start_install cache
   finish_auto cache ALLOW
@@ -212,7 +212,7 @@ scenario_invalid() {  # a bad signature invalidates, and cached evidence does no
   log "Scenario invalid: scan answers with a foreign signature, then for another app -> invalid, no cache"
   reset_device
   start_install invalid1; finish_auto invalid1 ALLOW
-  adb uninstall $SAMPLE_PKG >/dev/null; adb logcat -c
+  adb uninstall $SAMPLE_PKG >/dev/null 2>&1 || true; adb logcat -c
   scan_mode invalid-signature
   start_install invalid
   finish_review invalid Cancel
@@ -266,14 +266,14 @@ scenario_identity() {  # a provider update with a new signer is not trusted unti
   log "Scenario identity: the review provider is replaced by one with another signing key -> invalid"
   reset_device
   start_install identity1; finish_auto identity1 ALLOW     # binds the accepted identities
-  adb uninstall $SAMPLE_PKG >/dev/null
-  adb uninstall $REPORT >/dev/null
+  adb uninstall $SAMPLE_PKG >/dev/null 2>&1 || true
+  adb uninstall $REPORT >/dev/null 2>&1 || true
   install_quietly "$OUT/provider-report-otherkey.apk"; adb logcat -c
   start_install identity
   finish_review identity Cancel
   check "replaced provider was rejected as invalid" assessed identity $REPORT INVALID
   check "the reason names the identity change" log_has "signing identity changed" identity
-  adb uninstall $REPORT >/dev/null
+  adb uninstall $REPORT >/dev/null 2>&1 || true
   install_quietly "$OUT/provider-report.apk"
 }
 
