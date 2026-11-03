@@ -214,7 +214,6 @@
   "spec_plan_validation": "Target Android 12L–17 (API 32–37). The current reference manifest requires API 34; lower that requirement only after auditing APIs and validating on the older images. Test complete and incremental installs, deadline extension, notification delivery, signature checks, expiry, provider changes, and offline reuse. Test native ADV coordination separately: the AOSP fixture does not establish Google integration or compatibility across all releases.",
   "spec_plan_extensions": "Split APK sets require a canonical identity for the complete set. For incremental installs, establish a trustworthy binding between the available v4 identity and cached evidence before allowing them. Managed profiles may use administrator-controlled provider settings. Other platform protections and post-install scanning remain independent.",
   "spec_sources_title": "Sources",
-  "source_prototype": "Earlier AOSP proposal and prototype",
   "source_manifest": "Android manifest metadata",
   "source_services": "Android bound services",
   "source_aidl": "Android AIDL",
